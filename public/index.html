@@ -119,6 +119,28 @@ async function loadAll(){
 loadAll()
 
 </script>
+<script>
+async function loadFortunes() {
 
+  const serverless = await fetch('/api/fortune.js').then(r => r.json())
+  const edge = await fetch('/api/fortune-edge.js').then(r => r.json())
+
+  document.getElementById("serverlessResult").innerHTML = `
+    <h3>Serverless</h3>
+    <p><strong>Source:</strong> ${serverless.source}</p>
+    <p><strong>Fortune:</strong> ${serverless.fortune}</p>
+  `
+
+  document.getElementById("edgeResult").innerHTML = `
+    <h3>Edge</h3>
+    <p><strong>Source:</strong> ${edge.source}</p>
+    <p><strong>Fortune:</strong> ${edge.fortune}</p>
+    <p><strong>Timestamp:</strong> ${edge.timestamp}</p>
+  `
+
+}
+
+loadFortunes()
+</script>
 </body>
 </html>
