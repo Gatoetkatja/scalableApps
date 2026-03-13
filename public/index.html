@@ -3,80 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proyek Hands On - Scalable</title>
+<title>Koleksi Gallery</title>
 
 <style>
 
 body{
   font-family: Arial, sans-serif;
-  background:#f5f6fa;
+  background:#f4f6f9;
   margin:0;
   padding:40px;
 }
 
 .container{
-  max-width:900px;
+  max-width:1100px;
   margin:auto;
-  background:white;
-  padding:30px;
-  border-radius:10px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
 
 h1{
   text-align:center;
-}
-
-input{
-  padding:10px;
-  width:200px;
-  border-radius:6px;
-  border:1px solid #ccc;
-}
-
-button{
-  padding:10px 15px;
-  border:none;
-  border-radius:6px;
-  background:#4CAF50;
-  color:white;
-  cursor:pointer;
-}
-
-button:hover{
-  background:#45a049;
-}
-
-.detail{
-  margin-top:25px;
-}
-
-.error{
-  color:red;
+  margin-bottom:30px;
 }
 
 .gallery{
-  margin-top:20px;
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:15px;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:25px;
 }
 
-.gallery img{
+.card{
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(0,0,0,0.1);
+  transition:transform .2s, box-shadow .2s;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 12px 25px rgba(0,0,0,0.15);
+}
+
+.card img{
   width:100%;
-  border-radius:8px;
+  height:200px;
   object-fit:cover;
-  transition:transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.gallery img:hover{
-  transform:scale(1.05);
-  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+.card-content{
+  padding:15px;
 }
 
-.meta{
-  margin-top:15px;
-  line-height:1.6;
+.card-content h3{
+  margin:0 0 10px 0;
+}
+
+.card-content p{
+  margin:3px 0;
+  font-size:14px;
+  color:#555;
 }
 
 </style>
@@ -86,84 +70,53 @@ button:hover{
 
 <div class="container">
 
-<h1>Proyek Hands On - Scalable</h1>
-<p>Selamat datang di proyek Hands On - Scalable!</p>
+<h1>Gallery Koleksi</h1>
 
-<h2>Get Detail</h2>
-
-<input type="text" id="idInput" placeholder="Enter ID"/>
-<button onclick="getDetail()">Get Detail</button>
-
-<div id="result" class="detail" style="display:none"></div>
+<div id="gallery" class="gallery"></div>
 
 </div>
 
 <script>
 
-async function getDetail(){
+async function loadAll(){
 
-  const id = document.getElementById("idInput").value.trim()
+  const gallery = document.getElementById("gallery")
 
-  if(!id){
-    alert("Please enter an ID")
-    return
-  }
+  for(let id=1; id<=5; id++){
 
-  try{
+    try{
 
-    const response = await fetch(`/api/get-koleksi?id=${encodeURIComponent(id)}`)
-    const data = await response.json()
+      const response = await fetch(`/api/get-koleksi?id=${id}`)
+      const data = await response.json()
 
-    const resultDiv = document.getElementById("result")
+      if(response.ok){
 
-    if(response.ok){
+        const card = document.createElement("div")
+        card.className = "card"
 
-      let imagesHTML = ""
+        card.innerHTML = `
+          <img src="https://scalable-apps-ivr5.vercel.app${data.path}" alt="${data.judul}">
+          <div class="card-content">
+            <h3>${data.judul}</h3>
+            <p><strong>Pencipta:</strong> ${data.pencipta}</p>
+            <p><strong>Tahun:</strong> ${new Date(data.tahun).getFullYear()}</p>
+            <p><strong>Harga:</strong> ${data.harga}</p>
+          </div>
+        `
 
-      if(Array.isArray(data.paths)){
-        imagesHTML = data.paths.map(path =>
-          `<img src="https://scalable-apps-ivr5.vercel.app${path}" alt="${data.judul}">`
-        ).join("")
-      }else if(data.path){
-        imagesHTML = `<img src="https://scalable-apps-ivr5.vercel.app${data.path}" alt="${data.judul}">`
+        gallery.appendChild(card)
+
       }
 
-      resultDiv.innerHTML = `
-        <h3>Detail</h3>
-
-        <div class="meta">
-          <p><strong>Judul:</strong> ${data.judul}</p>
-          <p><strong>Pencipta:</strong> ${data.pencipta}</p>
-          <p><strong>Tahun:</strong> ${new Date(data.tahun).getFullYear()}</p>
-          <p><strong>Harga:</strong> ${data.harga}</p>
-        </div>
-
-        <div class="gallery">
-          ${imagesHTML}
-        </div>
-      `
-
-      resultDiv.className = "detail"
-
-    }else{
-
-      resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`
-      resultDiv.className = "detail error"
-
+    }catch(e){
+      console.log("failed id", id)
     }
-
-    resultDiv.style.display="block"
-
-  }catch(error){
-
-    document.getElementById("result").innerHTML =
-      `<p class="error">Error fetching data: ${error.message}</p>`
-
-    document.getElementById("result").style.display="block"
 
   }
 
 }
+
+loadAll()
 
 </script>
 
