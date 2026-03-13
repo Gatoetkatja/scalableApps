@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proyek Hands On - Scalable</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .detail {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Proyek Hands On - Scalable</h1>
+      <p>Selamat datang di proyek Hands On - Scalable!</p>
+
+      <h2>Get Detail</h2>
+      <input type="text" id="idInput" placeholder="Enter ID" />
+      <button onclick="getDetail()">Get Detail</button>
+
+      <div id="result" class="detail" style="display: none"></div>
+    </div>
+
+    <script>
+      async function getDetail() {
+        const id = document.getElementById('idInput').value.trim()
+        if (!id) {
+          alert('Please enter an ID')
+          return
+        }
+
+        try {
+          const response = await fetch(
+            `/api/get-koleksi?id=${encodeURIComponent(id)}`
+          )
+          const data = await response.json()
+
+          const resultDiv = document.getElementById('result')
+          if (response.ok) {
+            resultDiv.innerHTML = `
+              <h3>Detail:</h3>
+              <p><strong>Judul:</strong> ${data.judul}</p>
+              <p><strong>Pencipta:</strong> ${data.pencipta}</p>
+              <p><strong>Tahun:</strong> ${new Date(data.tahun).getFullYear()}</p>
+              <p><strong>Harga:</strong> ${data.harga}</p>
+              <p><strong>Path:</strong> ${data.path}</p>
+            `
+            resultDiv.className = 'detail'
+          } else {
+            resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`
+            resultDiv.className = 'detail error'
+          }
+          resultDiv.style.display = 'block'
+        } catch (error) {
+          document.getElementById('result').innerHTML =
+            `<p class="error">Error fetching data: ${error.message}</p>`
+          document.getElementById('result').style.display = 'block'
+        }
+      }
+    </script>
+  </body>
+</html>

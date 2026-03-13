@@ -1,7 +1,23 @@
 {
-  "name": "<project-kamu>",
+  "name": "proyek_handson",
   "version": "1.0.0",
-  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gatoetkatja/scalableApps.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Gatoetkatja/scalableApps/issues"
+  },
+  "homepage": "https://github.com/Gatoetkatja/scalableApps#readme",
   "dependencies": {
     "@supabase/supabase-js": "^2.99.1",
     "redis": "^5.11.0"
